@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>デュアルビュー練習 | G-HEARTS</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --color-bg: #0a0a0f;
+            --color-bg-secondary: #121218;
+            --color-surface: #1a1a24;
+            --color-white: #ffffff;
+            --color-cream: #f5f0e8;
+            --color-accent-primary: #ff6b35;
+            --color-accent-secondary: #00d4aa;
+            --color-accent-tertiary: #7c5cff;
+            --color-text: #e8e8e8;
+            --color-text-muted: #888899;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-blur: blur(20px);
+            --font-display: 'Cormorant Garamond', serif;
+            --font-body: 'Zen Kaku Gothic New', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+            --transition-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Noise overlay */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9990;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 40px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--color-white), var(--color-accent-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .back-link {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--color-text-muted);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--color-accent-secondary);
+            border-color: var(--color-accent-secondary);
+        }
+
+        /* Main container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 24px 40px;
+        }
+
+        /* Page title */
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-tagline {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--color-accent-secondary);
+            margin-bottom: 16px;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 400;
+            background: linear-gradient(135deg, var(--color-white), var(--color-accent-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+        }
+
+        .page-description {
+            color: var(--color-text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 0.95rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: var(--glass-blur);
+        }
+
+        .card-title {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--color-accent-secondary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mode selector */
+        .mode-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 20px;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            background: var(--glass-bg);
+            cursor: pointer;
+            transition: all 0.4s var(--transition-smooth);
+            text-align: center;
+            color: var(--color-text-muted);
+        }
+
+        .mode-btn:hover {
+            border-color: var(--color-accent-primary);
+            transform: translateY(-4px);
+        }
+
+        .mode-btn.active {
+            border-color: var(--color-accent-primary);
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(124, 92, 255, 0.1));
+            color: var(--color-white);
+        }
+
+        .mode-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .mode-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+            background: var(--color-bg-secondary);
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--color-text-muted);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-tertiary));
+            color: var(--color-white);
+        }
+
+        /* Inputs */
+        .input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            background: var(--color-bg-secondary);
+            color: var(--color-text);
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--color-accent-primary);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+
+        .input::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.4s var(--transition-smooth);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-tertiary));
+            color: var(--color-white);
+            box-shadow: 0 4px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--color-text);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            border-color: var(--color-accent-secondary);
+            color: var(--color-accent-secondary);
+        }
+
+        .btn-secondary.active {
+            background: linear-gradient(135deg, var(--color-accent-secondary), var(--color-accent-tertiary));
+            color: var(--color-white);
+            border-color: transparent;
+        }
+
+        .btn-record {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: var(--color-white);
+        }
+
+        .btn-sm {
+            padding: 10px 16px;
+            font-size: 0.65rem;
+        }
+
+        .btn-icon {
+            padding: 12px;
+            min-width: 44px;
+        }
+
+        /* Info box */
+        .info-box {
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.1), rgba(124, 92, 255, 0.1));
+            border: 1px solid rgba(0, 212, 170, 0.3);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .info-icon {
+            font-size: 24px;
+        }
+
+        .info-text {
+            font-size: 0.85rem;
+            color: var(--color-text);
+        }
+
+        .info-text strong {
+            color: var(--color-accent-secondary);
+        }
+
+        /* Size control */
+        .size-control {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--color-bg-secondary);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .size-control label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--color-text-muted);
+        }
+
+        .slider {
+            width: 150px;
+            height: 4px;
+            -webkit-appearance: none;
+            background: var(--glass-border);
+            border-radius: 2px;
+            cursor: pointer;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-tertiary));
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(255, 107, 53, 0.4);
+        }
+
+        /* View panels */
+        .view-area {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .view-panel {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            aspect-ratio: 16/9;
+        }
+
+        .view-panel video,
+        .view-panel iframe,
+        .view-panel canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .view-panel.mirror video,
+        .view-panel.mirror iframe {
+            transform: scaleX(-1);
+        }
+
+        .view-label {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            color: var(--color-white);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            z-index: 10;
+        }
+
+        .view-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--color-text-muted);
+        }
+
+        .view-placeholder-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        .view-placeholder-text {
+            font-size: 0.85rem;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        /* Countdown overlay */
+        .countdown-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 15, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .countdown-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .countdown-number {
+            font-family: var(--font-display);
+            font-size: 120px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-tertiary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: countdownPulse 1s ease-in-out;
+        }
+
+        .countdown-text {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--color-accent-primary);
+            margin-top: 16px;
+        }
+
+        .countdown-go {
+            font-family: var(--font-display);
+            font-size: 80px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--color-accent-secondary), var(--color-accent-tertiary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: countdownPulse 0.5s ease-in-out;
+        }
+
+        @keyframes countdownPulse {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Grid overlay */
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            display: none;
+        }
+
+        .grid-overlay.active {
+            display: block;
+            background-image: 
+                linear-gradient(to right, rgba(0, 212, 170, 0.5) 2px, transparent 2px),
+                linear-gradient(to bottom, rgba(0, 212, 170, 0.5) 2px, transparent 2px);
+            background-size: 33.33% 33.33%;
+        }
+
+        .grid-overlay.active::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: rgba(255, 107, 53, 0.8);
+            box-shadow: 0 0 15px rgba(255, 107, 53, 0.6);
+        }
+
+        .grid-overlay.active::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: rgba(255, 107, 53, 0.8);
+            box-shadow: 0 0 15px rgba(255, 107, 53, 0.6);
+        }
+
+        /* Control bar */
+        .control-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            backdrop-filter: var(--glass-blur);
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--color-text-muted);
+        }
+
+        .control-divider {
+            width: 1px;
+            height: 28px;
+            background: var(--glass-border);
+            margin: 0 8px;
+        }
+
+        .select {
+            padding: 10px 14px;
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            background: var(--color-bg-secondary);
+            color: var(--color-text);
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+
+        /* Recording indicator */
+        .recording-indicator {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            color: #ef4444;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+        }
+
+        .recording-indicator.active {
+            display: flex;
+        }
+
+        .recording-dot {
+            width: 10px;
+            height: 10px;
+            background: #ef4444;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            50% { opacity: 0.7; box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+        }
+
+        /* Compare section */
+        .compare-guide {
+            background: linear-gradient(135deg, rgba(124, 92, 255, 0.1), rgba(0, 212, 170, 0.1));
+            border: 1px solid rgba(124, 92, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .compare-guide h3 {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--color-accent-tertiary);
+            margin-bottom: 16px;
+        }
+
+        .compare-steps {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .compare-step {
+            flex: 1;
+            min-width: 140px;
+            background: var(--glass-bg);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-tertiary));
+            color: var(--color-white);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .step-text {
+            font-size: 0.8rem;
+            color: var(--color-text);
+            line-height: 1.5;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            background: var(--color-surface);
+            border: 1px solid var(--glass-border);
+            color: var(--color-white);
+            border-radius: 12px;
+            font-size: 0.85rem;
+            z-index: 2000;
+            display: none;
+            backdrop-filter: var(--glass-blur);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.show { display: block; }
+        .toast.error { border-color: #ef4444; }
+        .toast.success { border-color: var(--color-accent-secondary); }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .hidden { display: none !important; }
+
+        #cameraVideoHidden {
+            position: fixed;
+            top: -9999px;
+            left: -9999px;
+            width: 640px;
+            height: 360px;
+            opacity: 0.001;
+            pointer-events: none;
+            z-index: -9999;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header { padding: 16px 20px; }
+            .container { padding: 80px 16px 24px; }
+            .view-area { flex-direction: column; }
+            .view-panel { width: 100% !important; flex: none !important; }
+            .control-bar { justify-content: center; }
+            .control-divider { display: none; }
+            .mode-selector { flex-direction: column; }
+            .compare-steps { flex-direction: column; }
+            .countdown-number { font-size: 80px; }
+            .countdown-go { font-size: 60px; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="noise-overlay"></div>
+    <video id="cameraVideoHidden" autoplay playsinline muted></video>
+
+    <header class="header">
+        <a href="index.html" class="logo">G-HEARTS</a>
+        <a href="index.html" class="back-link">← Back to Home</a>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <p class="page-tagline">Free Tool</p>
+            <h1 class="page-title">デュアルビュー練習</h1>
+            <p class="page-description">
+                お手本動画と自分の動きを並べて比較。<br>
+                ダンス・スポーツ・フォーム練習に最適なツールです。
+            </p>
+        </div>
+
+        <!-- Mode selector -->
+        <div class="mode-selector">
+            <button class="mode-btn active" data-mode="practice" onclick="switchMode('practice')">
+                <div class="mode-icon">🎬</div>
+                <div class="mode-label">練習モード</div>
+            </button>
+            <button class="mode-btn" data-mode="compare" onclick="switchMode('compare')">
+                <div class="mode-icon">⚖️</div>
+                <div class="mode-label">比較モード</div>
+            </button>
+            <button class="mode-btn" data-mode="overlay" onclick="switchMode('overlay')">
+                <div class="mode-icon">🔲</div>
+                <div class="mode-label">オーバーレイ</div>
+            </button>
+        </div>
+
+        <!-- Video source -->
+        <div class="card">
+            <div class="card-title">📺 お手本動画を選択</div>
+            
+            <div class="tabs">
+                <button class="tab active" data-source="youtube" onclick="switchSource('youtube')">YouTube</button>
+                <button class="tab" data-source="local" onclick="switchSource('local')">ローカル動画</button>
+            </div>
+
+            <div id="sourceYoutube" class="source-input">
+                <div style="display: flex; gap: 12px;">
+                    <input type="text" class="input" id="youtubeUrl" placeholder="YouTube URLを入力">
+                    <button class="btn btn-primary" onclick="loadYouTube()">読込</button>
+                </div>
+            </div>
+
+            <div id="sourceLocal" class="source-input hidden">
+                <input type="file" id="localFile" accept="video/*" onchange="loadLocalFile(this)" style="display: none;">
+                <button class="btn btn-primary" onclick="document.getElementById('localFile').click()">📂 ファイルを選択</button>
+                <span id="localSelectedName" style="margin-left: 16px; font-size: 0.85rem; color: var(--color-text-muted);"></span>
+            </div>
+        </div>
+
+        <!-- Sync info -->
+        <div class="info-box">
+            <div class="info-icon">💡</div>
+            <div class="info-text">
+                <strong>同期録画機能:</strong> 録画開始で3秒カウントダウン後、録画とお手本が同時スタート。比較モードで完璧に同期！
+            </div>
+        </div>
+
+        <!-- Size control -->
+        <div class="size-control" id="sizeControl">
+            <label>📐 画面比率:</label>
+            <span style="font-size: 0.75rem; color: var(--color-text-muted);">お手本</span>
+            <input type="range" class="slider" id="sizeSlider" min="20" max="80" value="50" oninput="updatePanelSize(this.value)">
+            <span style="font-size: 0.75rem; color: var(--color-text-muted);">カメラ</span>
+            <span id="sizeValue" style="font-size: 0.75rem; color: var(--color-accent-secondary);">50% : 50%</span>
+        </div>
+
+        <!-- Overlay opacity -->
+        <div id="overlayControl" class="size-control hidden">
+            <label>🔲 お手本の透明度:</label>
+            <input type="range" class="slider" id="overlayOpacity" min="0" max="100" value="50" oninput="updateOverlayOpacity(this.value)">
+            <span id="opacityValue" style="font-size: 0.75rem; color: var(--color-accent-secondary);">50%</span>
+        </div>
+
+        <!-- Compare guide -->
+        <div id="compareGuide" class="compare-guide hidden">
+            <h3>📖 比較モードの使い方</h3>
+            <div class="compare-steps">
+                <div class="compare-step">
+                    <div class="step-number">1</div>
+                    <div class="step-text">お手本動画を<br>読み込む</div>
+                </div>
+                <div class="compare-step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">練習モードで<br>同期録画</div>
+                </div>
+                <div class="compare-step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">同期再生で<br>比較確認</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View area -->
+        <div class="view-area" id="viewArea">
+            <div class="view-panel" id="referencePanel" style="flex: 1;">
+                <div class="view-label">お手本</div>
+                <div class="grid-overlay" id="referenceGrid"></div>
+                <div class="view-placeholder" id="referencePlaceholder">
+                    <div class="view-placeholder-icon">📺</div>
+                    <div class="view-placeholder-text">お手本動画を選択してください</div>
+                </div>
+                <div id="youtubeContainer" class="hidden" style="width:100%;height:100%;"></div>
+                <video id="referenceVideo" class="hidden" playsinline controls></video>
+                <div class="countdown-overlay" id="countdownOverlayRef">
+                    <div class="countdown-number" id="countdownNumberRef">3</div>
+                    <div class="countdown-text">録画準備中...</div>
+                </div>
+            </div>
+
+            <div class="view-panel" id="cameraPanel" style="flex: 1;">
+                <div class="view-label" id="cameraLabel">カメラ</div>
+                <div class="grid-overlay" id="cameraGrid"></div>
+                <div class="view-placeholder" id="cameraPlaceholder">
+                    <div class="view-placeholder-icon">📷</div>
+                    <div class="view-placeholder-text">カメラを起動中...</div>
+                </div>
+                <video id="cameraVideo" class="hidden" autoplay playsinline muted></video>
+                <video id="recordedVideo" class="hidden" playsinline controls></video>
+                <div class="countdown-overlay" id="countdownOverlayCam">
+                    <div class="countdown-number" id="countdownNumberCam">3</div>
+                    <div class="countdown-text">録画準備中...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overlay area -->
+        <div class="hidden" id="overlayArea">
+            <div class="view-panel" id="overlayPanel" style="width: 100%; max-width: 900px; margin: 0 auto;">
+                <div class="view-label">オーバーレイ</div>
+                <div class="grid-overlay" id="overlayGrid"></div>
+                <canvas id="overlayCanvas"></canvas>
+            </div>
+        </div>
+
+        <!-- Control bar -->
+        <div class="control-bar">
+            <div class="control-group">
+                <button class="btn btn-secondary btn-icon" id="playPauseBtn" onclick="togglePlayPause()">▶️</button>
+                <button class="btn btn-secondary btn-icon" onclick="seekVideo(-5)">⏪</button>
+                <button class="btn btn-secondary btn-icon" onclick="seekVideo(5)">⏩</button>
+            </div>
+
+            <div class="control-divider"></div>
+
+            <div class="control-group">
+                <span class="control-label">速度:</span>
+                <select class="select" id="playbackSpeed" onchange="changeSpeed(this.value)">
+                    <option value="0.25">0.25x</option>
+                    <option value="0.5">0.5x</option>
+                    <option value="0.75">0.75x</option>
+                    <option value="1" selected>1x</option>
+                    <option value="1.25">1.25x</option>
+                    <option value="1.5">1.5x</option>
+                    <option value="2">2x</option>
+                </select>
+            </div>
+
+            <div class="control-divider"></div>
+
+            <div class="control-group">
+                <button class="btn btn-secondary btn-sm active" id="refMirrorBtn" onclick="toggleRefMirror()">🪞 お手本</button>
+                <button class="btn btn-secondary btn-sm" id="camMirrorBtn" onclick="toggleCamMirror()">🪞 カメラ</button>
+            </div>
+
+            <div class="control-divider"></div>
+
+            <div class="control-group">
+                <button class="btn btn-secondary btn-sm" onclick="switchCamera()">🔄 カメラ</button>
+            </div>
+
+            <div class="control-divider"></div>
+
+            <div class="control-group">
+                <button class="btn btn-record btn-sm" id="recordBtn" onclick="toggleRecording()">⏺️ 録画</button>
+                <div class="recording-indicator" id="recordingIndicator">
+                    <span class="recording-dot"></span>
+                    <span id="recordingTime">00:00</span>
+                </div>
+            </div>
+
+            <div class="control-divider"></div>
+
+            <div class="control-group">
+                <button class="btn btn-secondary btn-sm" onclick="swapPanels()">↔️</button>
+                <button class="btn btn-secondary btn-sm" id="gridBtn" onclick="toggleGrid()">📐</button>
+            </div>
+        </div>
+
+        <!-- Compare controls -->
+        <div id="compareControls" class="card hidden">
+            <div class="card-title">📼 録画を選択して比較</div>
+            <div style="margin-bottom: 16px;">
+                <input type="file" id="recordedFile" accept="video/*" onchange="loadRecordedFile(this)" style="display: none;">
+                <button class="btn btn-primary" onclick="document.getElementById('recordedFile').click()">📂 録画を選択</button>
+                <span id="recordedFileName" style="margin-left: 16px; font-size: 0.85rem; color: var(--color-text-muted);"></span>
+            </div>
+            <div class="control-group">
+                <button class="btn btn-secondary btn-sm" onclick="syncPlayback()" style="background: linear-gradient(135deg, var(--color-accent-secondary), var(--color-accent-tertiary)); color: white; border: none;">🔄 同期再生</button>
+                <button class="btn btn-secondary btn-sm" onclick="resetPlayback()">⏮️ 最初から</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        // Global state
+        let currentMode = 'practice';
+        let currentSource = 'youtube';
+        let youtubePlayer = null;
+        let youtubeReady = false;
+        let cameraStream = null;
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let isRecording = false;
+        let isCountingDown = false;
+        let recordingStartTime = null;
+        let recordingTimer = null;
+        let isRefMirrored = true;
+        let isCamMirrored = false;
+        let isSwapped = false;
+        let isGridVisible = false;
+        let currentFacingMode = 'user';
+        let overlayAnimationId = null;
+        let cameraVideoHidden = null;
+        let cameraVideoVisible = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            cameraVideoHidden = document.getElementById('cameraVideoHidden');
+            cameraVideoVisible = document.getElementById('cameraVideo');
+            initCamera();
+            updateRefMirror();
+        });
+
+        function onYouTubeIframeAPIReady() { youtubeReady = true; }
+
+        async function initCamera() {
+            try {
+                const constraints = { video: { facingMode: currentFacingMode, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: true };
+                cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+                
+                // 非表示ビデオ（オーバーレイ用）- 常にアクティブに保つ
+                cameraVideoHidden.srcObject = cameraStream;
+                cameraVideoHidden.play().catch(e => console.log('Hidden video play:', e));
+                
+                // 表示用ビデオ
+                cameraVideoVisible.srcObject = cameraStream;
+                cameraVideoVisible.classList.remove('hidden');
+                document.getElementById('cameraPlaceholder').classList.add('hidden');
+                showToast('カメラを起動しました', 'success');
+            } catch (err) {
+                document.getElementById('cameraPlaceholder').innerHTML = `<div class="view-placeholder-icon">⚠️</div><div class="view-placeholder-text">カメラにアクセスできません</div>`;
+                showToast('カメラにアクセスできません', 'error');
+            }
+        }
+
+        async function switchCamera() {
+            currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+            if (cameraStream) cameraStream.getTracks().forEach(track => track.stop());
+            await initCamera();
+            showToast('カメラを切り替えました');
+        }
+
+        function toggleRefMirror() { isRefMirrored = !isRefMirrored; updateRefMirror(); }
+        function updateRefMirror() {
+            const panel = document.getElementById('referencePanel');
+            const btn = document.getElementById('refMirrorBtn');
+            panel.classList.toggle('mirror', isRefMirrored);
+            btn.classList.toggle('active', isRefMirrored);
+        }
+
+        function toggleCamMirror() {
+            isCamMirrored = !isCamMirrored;
+            document.getElementById('cameraPanel').classList.toggle('mirror', isCamMirrored);
+            document.getElementById('camMirrorBtn').classList.toggle('active', isCamMirrored);
+        }
+
+        function updatePanelSize(value) {
+            const refSize = parseInt(value);
+            document.getElementById('referencePanel').style.flex = refSize;
+            document.getElementById('cameraPanel').style.flex = 100 - refSize;
+            document.getElementById('sizeValue').textContent = `${refSize}% : ${100 - refSize}%`;
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.mode === mode));
+            const viewArea = document.getElementById('viewArea');
+            const overlayArea = document.getElementById('overlayArea');
+            if (overlayAnimationId) { cancelAnimationFrame(overlayAnimationId); overlayAnimationId = null; }
+            
+            document.getElementById('overlayControl').classList.toggle('hidden', mode !== 'overlay');
+            document.getElementById('compareControls').classList.toggle('hidden', mode !== 'compare');
+            document.getElementById('compareGuide').classList.toggle('hidden', mode !== 'compare');
+            document.getElementById('sizeControl').classList.toggle('hidden', mode === 'overlay');
+            document.getElementById('cameraLabel').textContent = mode === 'compare' ? '録画' : 'カメラ';
+            viewArea.classList.toggle('hidden', mode === 'overlay');
+            overlayArea.classList.toggle('hidden', mode !== 'overlay');
+            
+            if (mode === 'practice') showCamera();
+            else if (mode === 'compare') showRecorded();
+            else if (mode === 'overlay') startOverlay();
+        }
+
+        function showCamera() {
+            cameraVideoVisible.classList.remove('hidden');
+            document.getElementById('recordedVideo').classList.add('hidden');
+            document.getElementById('cameraPlaceholder').classList.add('hidden');
+        }
+
+        function showRecorded() {
+            cameraVideoVisible.classList.add('hidden');
+            const recordedVideo = document.getElementById('recordedVideo');
+            if (recordedVideo.src) {
+                recordedVideo.classList.remove('hidden');
+                document.getElementById('cameraPlaceholder').classList.add('hidden');
+            } else {
+                recordedVideo.classList.add('hidden');
+                document.getElementById('cameraPlaceholder').classList.remove('hidden');
+                document.getElementById('cameraPlaceholder').innerHTML = `<div class="view-placeholder-icon">📼</div><div class="view-placeholder-text">録画ファイルを選択してください</div>`;
+            }
+        }
+
+        function switchSource(source) {
+            currentSource = source;
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.toggle('active', tab.dataset.source === source));
+            document.getElementById('sourceYoutube').classList.toggle('hidden', source !== 'youtube');
+            document.getElementById('sourceLocal').classList.toggle('hidden', source !== 'local');
+        }
+
+        function loadYouTube() {
+            const url = document.getElementById('youtubeUrl').value.trim();
+            if (!url) { showToast('URLを入力してください', 'error'); return; }
+            const videoId = extractYouTubeVideoId(url);
+            if (!videoId) { showToast('有効なYouTube URLを入力してください', 'error'); return; }
+            playYouTube(videoId);
+        }
+
+        function extractYouTubeVideoId(url) {
+            const patterns = [/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([^&\n?#]+)/, /^([a-zA-Z0-9_-]{11})$/];
+            for (const pattern of patterns) { const match = url.match(pattern); if (match) return match[1]; }
+            return null;
+        }
+
+        function playYouTube(videoId) {
+            document.getElementById('referencePlaceholder').classList.add('hidden');
+            document.getElementById('referenceVideo').classList.add('hidden');
+            document.getElementById('youtubeContainer').classList.remove('hidden');
+            if (youtubePlayer) youtubePlayer.loadVideoById(videoId);
+            else youtubePlayer = new YT.Player('youtubeContainer', { height: '100%', width: '100%', videoId, playerVars: { playsinline: 1, rel: 0 }, events: { onStateChange: e => document.getElementById('playPauseBtn').textContent = e.data === YT.PlayerState.PLAYING ? '⏸️' : '▶️' } });
+            showToast('YouTube動画を読み込みました');
+        }
+
+        function loadLocalFile(input) {
+            if (input.files?.[0]) {
+                const file = input.files[0];
+                document.getElementById('localSelectedName').textContent = file.name;
+                document.getElementById('referencePlaceholder').classList.add('hidden');
+                document.getElementById('youtubeContainer').classList.add('hidden');
+                const video = document.getElementById('referenceVideo');
+                video.src = URL.createObjectURL(file);
+                video.classList.remove('hidden');
+                showToast(`「${file.name}」を読み込みました`);
+            }
+        }
+
+        function loadRecordedFile(input) {
+            if (input.files?.[0]) {
+                const file = input.files[0];
+                document.getElementById('recordedFileName').textContent = file.name;
+                const recordedVideo = document.getElementById('recordedVideo');
+                recordedVideo.src = URL.createObjectURL(file);
+                recordedVideo.classList.remove('hidden');
+                document.getElementById('cameraPlaceholder').classList.add('hidden');
+                showToast(`録画を読み込みました`);
+            }
+        }
+
+        function toggleRecording() {
+            if (isRecording) stopRecording();
+            else if (isCountingDown) cancelCountdown();
+            else startCountdown();
+        }
+
+        function startCountdown() {
+            if (!cameraStream) { showToast('カメラが利用できません', 'error'); return; }
+            isCountingDown = true;
+            document.getElementById('recordBtn').textContent = '❌ キャンセル';
+            
+            const refVideo = document.getElementById('referenceVideo');
+            if (refVideo?.src) { refVideo.currentTime = 0; refVideo.pause(); }
+            if (youtubePlayer?.seekTo) { youtubePlayer.seekTo(0, true); youtubePlayer.pauseVideo(); }
+            
+            const overlayRef = document.getElementById('countdownOverlayRef');
+            const overlayCam = document.getElementById('countdownOverlayCam');
+            const numberRef = document.getElementById('countdownNumberRef');
+            const numberCam = document.getElementById('countdownNumberCam');
+            overlayRef.classList.add('active');
+            overlayCam.classList.add('active');
+            
+            let count = 3;
+            numberRef.textContent = count; numberCam.textContent = count;
+            numberRef.className = 'countdown-number'; numberCam.className = 'countdown-number';
+            showToast('3秒後に録画開始！');
+            
+            const interval = setInterval(() => {
+                if (!isCountingDown) { clearInterval(interval); overlayRef.classList.remove('active'); overlayCam.classList.remove('active'); return; }
+                count--;
+                if (count > 0) {
+                    numberRef.textContent = count; numberCam.textContent = count;
+                    numberRef.style.animation = 'none'; numberCam.style.animation = 'none';
+                    void numberRef.offsetWidth;
+                    numberRef.style.animation = ''; numberCam.style.animation = '';
+                } else if (count === 0) {
+                    numberRef.textContent = 'GO!'; numberCam.textContent = 'GO!';
+                    numberRef.className = 'countdown-go'; numberCam.className = 'countdown-go';
+                } else {
+                    clearInterval(interval);
+                    overlayRef.classList.remove('active'); overlayCam.classList.remove('active');
+                    isCountingDown = false;
+                    startRecordingWithSync();
+                }
+            }, 1000);
+        }
+
+        function cancelCountdown() {
+            isCountingDown = false;
+            document.getElementById('recordBtn').textContent = '⏺️ 録画';
+            document.getElementById('countdownOverlayRef').classList.remove('active');
+            document.getElementById('countdownOverlayCam').classList.remove('active');
+            showToast('キャンセルしました');
+        }
+
+        function startRecordingWithSync() {
+            recordedChunks = [];
+            try { mediaRecorder = new MediaRecorder(cameraStream, { mimeType: 'video/webm;codecs=vp9' }); }
+            catch { try { mediaRecorder = new MediaRecorder(cameraStream, { mimeType: 'video/webm' }); } catch { showToast('録画非対応', 'error'); return; } }
+            
+            mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+            mediaRecorder.onstop = () => saveRecording(new Blob(recordedChunks, { type: 'video/webm' }));
+            mediaRecorder.start(1000);
+            
+            const refVideo = document.getElementById('referenceVideo');
+            if (refVideo?.src) { refVideo.currentTime = 0; refVideo.play(); }
+            if (youtubePlayer?.playVideo) { youtubePlayer.seekTo(0, true); youtubePlayer.playVideo(); }
+            
+            isRecording = true;
+            recordingStartTime = Date.now();
+            document.getElementById('recordBtn').textContent = '⏹️ 停止';
+            document.getElementById('recordingIndicator').classList.add('active');
+            document.getElementById('playPauseBtn').textContent = '⏸️';
+            updateRecordingTime();
+            recordingTimer = setInterval(updateRecordingTime, 1000);
+            showToast('🎬 録画開始！', 'success');
+        }
+
+        function stopRecording() {
+            if (mediaRecorder?.state !== 'inactive') mediaRecorder.stop();
+            const refVideo = document.getElementById('referenceVideo');
+            if (refVideo && !refVideo.paused) refVideo.pause();
+            if (youtubePlayer?.pauseVideo) youtubePlayer.pauseVideo();
+            
+            isRecording = false;
+            clearInterval(recordingTimer);
+            document.getElementById('recordBtn').textContent = '⏺️ 録画';
+            document.getElementById('recordingIndicator').classList.remove('active');
+            document.getElementById('playPauseBtn').textContent = '▶️';
+            showToast('録画完了！比較モードで確認できます');
+        }
+
+        function updateRecordingTime() {
+            const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+            document.getElementById('recordingTime').textContent = `${String(Math.floor(elapsed / 60)).padStart(2, '0')}:${String(elapsed % 60).padStart(2, '0')}`;
+        }
+
+        function saveRecording(blob) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `練習録画_${new Date().toLocaleString('ja-JP').replace(/[\/\s:]/g, '-')}.webm`;
+            a.click();
+            document.getElementById('recordedVideo').src = url;
+            showToast('録画を保存しました', 'success');
+        }
+
+        function togglePlayPause() {
+            const btn = document.getElementById('playPauseBtn');
+            const refVideo = document.getElementById('referenceVideo');
+            const recordedVideo = document.getElementById('recordedVideo');
+            
+            if (youtubePlayer?.getPlayerState) {
+                if (youtubePlayer.getPlayerState() === YT.PlayerState.PLAYING) { youtubePlayer.pauseVideo(); btn.textContent = '▶️'; }
+                else { youtubePlayer.playVideo(); btn.textContent = '⏸️'; }
+            }
+            if (!refVideo.classList.contains('hidden') && refVideo.src) {
+                if (refVideo.paused) { refVideo.play(); btn.textContent = '⏸️'; }
+                else { refVideo.pause(); btn.textContent = '▶️'; }
+            }
+            if (currentMode === 'compare' && !recordedVideo.classList.contains('hidden') && recordedVideo.src) {
+                if (recordedVideo.paused) recordedVideo.play(); else recordedVideo.pause();
+            }
+        }
+
+        function seekVideo(seconds) {
+            if (youtubePlayer?.getCurrentTime) youtubePlayer.seekTo(youtubePlayer.getCurrentTime() + seconds, true);
+            const refVideo = document.getElementById('referenceVideo');
+            if (!refVideo.classList.contains('hidden') && refVideo.src) refVideo.currentTime += seconds;
+            if (currentMode === 'compare') {
+                const recordedVideo = document.getElementById('recordedVideo');
+                if (!recordedVideo.classList.contains('hidden') && recordedVideo.src) recordedVideo.currentTime += seconds;
+            }
+        }
+
+        function changeSpeed(speed) {
+            const rate = parseFloat(speed);
+            if (youtubePlayer?.setPlaybackRate) youtubePlayer.setPlaybackRate(rate);
+            document.getElementById('referenceVideo').playbackRate = rate;
+            document.getElementById('recordedVideo').playbackRate = rate;
+        }
+
+        function syncPlayback() {
+            const refVideo = document.getElementById('referenceVideo');
+            const recordedVideo = document.getElementById('recordedVideo');
+            if (youtubePlayer?.seekTo) { youtubePlayer.seekTo(0, true); youtubePlayer.playVideo(); }
+            if (refVideo?.src) { refVideo.currentTime = 0; refVideo.play(); }
+            if (recordedVideo?.src) { recordedVideo.currentTime = 0; recordedVideo.play(); }
+            document.getElementById('playPauseBtn').textContent = '⏸️';
+            showToast('同期再生を開始');
+        }
+
+        function resetPlayback() {
+            if (youtubePlayer?.seekTo) { youtubePlayer.seekTo(0, true); youtubePlayer.pauseVideo(); }
+            document.getElementById('referenceVideo').currentTime = 0;
+            document.getElementById('recordedVideo').currentTime = 0;
+            document.getElementById('playPauseBtn').textContent = '▶️';
+        }
+
+        function startOverlay() {
+            const canvas = document.getElementById('overlayCanvas');
+            const ctx = canvas.getContext('2d');
+            const refVideo = document.getElementById('referenceVideo');
+            canvas.width = 1280; canvas.height = 720;
+            
+            // cameraVideoHiddenが再生されていることを確認
+            if (cameraVideoHidden && cameraVideoHidden.paused && cameraStream) {
+                cameraVideoHidden.play().catch(e => console.log('Overlay: Hidden video play:', e));
+            }
+            
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // カメラ映像を描画（cameraVideoHiddenから取得）
+                if (cameraVideoHidden && cameraVideoHidden.readyState >= 2 && cameraVideoHidden.videoWidth > 0) {
+                    ctx.save();
+                    if (isCamMirrored) { ctx.scale(-1, 1); ctx.drawImage(cameraVideoHidden, -canvas.width, 0, canvas.width, canvas.height); }
+                    else ctx.drawImage(cameraVideoHidden, 0, 0, canvas.width, canvas.height);
+                    ctx.restore();
+                } else {
+                    // カメラ準備中の表示
+                    ctx.fillStyle = '#1a1a24';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = '#888899';
+                    ctx.font = '18px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('カメラ準備中...', canvas.width / 2, canvas.height / 2);
+                }
+                
+                // お手本を半透明で重ねる
+                ctx.globalAlpha = parseFloat(document.getElementById('overlayOpacity').value) / 100;
+                if (refVideo && !refVideo.classList.contains('hidden') && refVideo.readyState >= 2) {
+                    ctx.save();
+                    if (isRefMirrored) { ctx.scale(-1, 1); ctx.drawImage(refVideo, -canvas.width, 0, canvas.width, canvas.height); }
+                    else ctx.drawImage(refVideo, 0, 0, canvas.width, canvas.height);
+                    ctx.restore();
+                }
+                ctx.globalAlpha = 1;
+                overlayAnimationId = requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        function updateOverlayOpacity(value) { document.getElementById('opacityValue').textContent = value + '%'; }
+
+        function swapPanels() {
+            isSwapped = !isSwapped;
+            document.getElementById('viewArea').style.flexDirection = isSwapped ? 'row-reverse' : 'row';
+            showToast('左右を入れ替えました');
+        }
+
+        function toggleGrid() {
+            isGridVisible = !isGridVisible;
+            document.getElementById('referenceGrid').classList.toggle('active', isGridVisible);
+            document.getElementById('cameraGrid').classList.toggle('active', isGridVisible);
+            document.getElementById('overlayGrid').classList.toggle('active', isGridVisible);
+            document.getElementById('gridBtn').classList.toggle('active', isGridVisible);
+        }
+
+        function showToast(message, type = '') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show ' + type;
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>
