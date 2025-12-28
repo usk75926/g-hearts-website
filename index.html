@@ -1582,6 +1582,23 @@
         .glow-on-scroll.active::after {
             opacity: 1;
         }
+
+        /* =============================================
+           TOOLS - Hover Effects
+        ============================================= */
+        .tool-card:hover {
+            border-color: var(--color-accent-primary);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(255, 107, 53, 0.15);
+        }
+
+        .tool-card:hover .tool-card-accent {
+            transform: scaleX(1);
+        }
+
+        .tool-card:hover .tool-arrow {
+            transform: translateX(6px);
+        }
     </style>
 </head>
 
@@ -1790,6 +1807,139 @@
                     <span class="community-card-arrow">→</span>
                 </div>
             </article>
+        </div>
+    </section>
+
+
+    <section id="tools" class="section tools parallax-section">
+        <div class="section-header" style="text-align: center; max-width: 600px; margin: 0 auto 80px;">
+            <span class="section-number">03.5 — Tools</span>
+            <h2 class="section-title reveal">無料ツール</h2>
+            <p class="section-subtitle reveal reveal-delay-1" style="margin: 0 auto;">
+                日々の学びと成長をサポートする、<br>無料で使えるWebツールです。
+            </p>
+        </div>
+
+        <div class="tools-grid stagger-reveal"
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; max-width: 1000px; margin: 0 auto; padding: 0 24px;">
+
+            <!-- デュアルビュー練習ツール -->
+            <a href="dual-view.html" class="tool-card" style="
+                display: block;
+                background: var(--glass-bg);
+                border: 1px solid var(--glass-border);
+                border-radius: 20px;
+                padding: 40px 32px;
+                text-decoration: none;
+                transition: all 0.5s var(--transition-smooth);
+                position: relative;
+                overflow: hidden;
+            ">
+                <div style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 4px;
+                    background: linear-gradient(90deg, var(--color-accent-primary), var(--color-accent-tertiary));
+                    transform: scaleX(0);
+                    transform-origin: left;
+                    transition: transform 0.5s var(--transition-smooth);
+                " class="tool-card-accent"></div>
+
+                <div style="font-size: 48px; margin-bottom: 20px;">🎬</div>
+
+                <h3 style="
+                    font-family: var(--font-display);
+                    font-size: 1.8rem;
+                    font-weight: 400;
+                    color: var(--color-white);
+                    margin-bottom: 12px;
+                ">デュアルビュー練習</h3>
+
+                <p style="
+                    color: var(--color-text-muted);
+                    font-size: 0.9rem;
+                    line-height: 1.7;
+                    margin-bottom: 24px;
+                ">
+                    お手本動画と自分の動きを並べて比較。<br>
+                    ダンス・スポーツ・フォーム練習に最適。<br>
+                    3秒カウントダウンで同期録画→比較再生。
+                </p>
+
+                <div style="
+                    display: flex;
+                    gap: 8px;
+                    flex-wrap: wrap;
+                    margin-bottom: 24px;
+                ">
+                    <span style="
+                        font-family: var(--font-mono);
+                        font-size: 0.65rem;
+                        letter-spacing: 0.1em;
+                        padding: 6px 12px;
+                        background: rgba(255, 107, 53, 0.15);
+                        color: var(--color-accent-primary);
+                        border-radius: 4px;
+                    ">YouTube対応</span>
+                    <span style="
+                        font-family: var(--font-mono);
+                        font-size: 0.65rem;
+                        letter-spacing: 0.1em;
+                        padding: 6px 12px;
+                        background: rgba(0, 212, 170, 0.15);
+                        color: var(--color-accent-secondary);
+                        border-radius: 4px;
+                    ">録画機能</span>
+                    <span style="
+                        font-family: var(--font-mono);
+                        font-size: 0.65rem;
+                        letter-spacing: 0.1em;
+                        padding: 6px 12px;
+                        background: rgba(124, 92, 255, 0.15);
+                        color: var(--color-accent-tertiary);
+                        border-radius: 4px;
+                    ">ミラー反転</span>
+                </div>
+
+                <div style="
+                    font-family: var(--font-mono);
+                    font-size: 0.75rem;
+                    letter-spacing: 0.15em;
+                    text-transform: uppercase;
+                    color: var(--color-accent-secondary);
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                ">
+                    ツールを使う
+                    <span style="transition: transform 0.3s ease;" class="tool-arrow">→</span>
+                </div>
+            </a>
+
+            <!-- 将来のツール用プレースホルダー（必要なければ削除） -->
+            <div style="
+                background: var(--glass-bg);
+                border: 1px dashed var(--glass-border);
+                border-radius: 20px;
+                padding: 40px 32px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 300px;
+            ">
+                <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;">🚀</div>
+                <p style="
+                    color: var(--color-text-muted);
+                    font-size: 0.9rem;
+                    text-align: center;
+                    opacity: 0.6;
+                ">
+                    新しいツールを<br>準備中です...
+                </p>
+            </div>
         </div>
     </section>
 
