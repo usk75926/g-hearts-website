@@ -1599,6 +1599,75 @@
         .tool-card:hover .tool-arrow {
             transform: translateX(6px);
         }
+
+        /* =============================================
+           CLIENTS - Infinite Scroll
+        ============================================= */
+        .clients {
+            background: var(--color-bg);
+            padding: 100px 0;
+            overflow: hidden;
+        }
+
+        .client-slider {
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        }
+
+        .client-track {
+            display: flex;
+            width: max-content;
+            animation: scrollLeft 40s linear infinite;
+            gap: 80px;
+        }
+
+        .client-track:hover {
+            animation-play-state: paused;
+        }
+
+        .client-logo-wrapper {
+            /* removed fixed width */
+            padding: 0 40px;
+            /* Add padding instead of fixed width */
+            height: 140px;
+            /* Increased container height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s var(--transition-smooth);
+        }
+
+        .client-logo-wrapper:hover {
+            transform: scale(1.05);
+            /* Slightly reduced scale to avoid overflow */
+        }
+
+        .client-logo {
+            height: 90px;
+            /* Unify height to uniform size */
+            width: auto;
+            /* Maintain aspect ratio */
+            object-fit: contain;
+            filter: grayscale(100%) opacity(0.5);
+            transition: all 0.3s ease;
+        }
+
+        .client-logo-wrapper:hover .client-logo {
+            filter: grayscale(0%) opacity(1);
+        }
+
+        @keyframes scrollLeft {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-25%);
+            }
+        }
     </style>
 </head>
 
@@ -1939,6 +2008,76 @@
                 ">
                     新しいツールを<br>準備中です...
                 </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="clients section">
+        <div class="section-header" style="text-align: center; max-width: 600px; margin: 0 auto 80px;">
+            <span class="section-number">03.8 — Clients</span>
+            <h2 class="section-title reveal">主要取引先</h2>
+            <p class="section-subtitle reveal reveal-delay-1" style="margin: 0 auto;">
+                共に未来を創るパートナー
+            </p>
+        </div>
+
+        <div class="client-slider reveal reveal-delay-2">
+            <div class="client-track">
+                <!-- Set 1 -->
+                <div class="client-logo-wrapper">
+                    <img src="images/client-daiwa.png" alt="Daiwa" class="client-logo">
+                </div>
+                <div class="client-logo-wrapper">
+                    <img src="images/client-chubu.png" alt="Chubu" class="client-logo">
+                </div>
+                <div class="client-logo-wrapper">
+                    <img src="images/client-recmill.png" alt="Recmill" class="client-logo">
+                </div>
+                <div class="client-logo-wrapper">
+                    <img src="images/client-shinei.png" alt="Shinei" class="client-logo">
+                </div>
+
+                <!-- Set 2 -->
+                <div class="client-logo-wrapper">
+                    <img src="images/client-daiwa.png" alt="Daiwa" class="client-logo">
+                </div>
+                <div class="client-logo-wrapper">
+                    <img src="images/client-chubu.png" alt="Chubu" class="client-logo">
+                </div>
+                <div class="client-logo-wrapper">
+                    <img src="images/client-recmill.png" alt="Recmill" class="client-logo">
+                </div>
+                <div class="client-logo-wrapper">
+                    <img src="images/client-shinei.png" alt="Shinei" class="client-logo">
+                </div>
+
+                <!-- Set 3 -->
+                <div class="client-logo-wrapper">
+                    <img src="images/client-daiwa.png" alt="Daiwa" class="client-logo">
+                </div>
+                <div class="client-logo-wrapper">
+                    <img src="images/client-chubu.png" alt="Chubu" class="client-logo">
+                </div>
+                <div class="client-logo-wrapper">
+                    <img src="images/client-recmill.png" alt="Recmill" class="client-logo">
+                </div>
+                <div class="client-logo-wrapper">
+                    <img src="images/client-shinei.png" alt="Shinei" class="client-logo">
+                </div>
+
+                <!-- Set 4 (Buffer) -->
+                <div class="client-logo-wrapper">
+                    <img src="images/client-daiwa.png" alt="Daiwa" class="client-logo">
+                </div>
+                <div class="client-logo-wrapper">
+                    <img src="images/client-chubu.png" alt="Chubu" class="client-logo">
+                </div>
+                <div class="client-logo-wrapper">
+                    <img src="images/client-recmill.png" alt="Recmill" class="client-logo">
+                </div>
+                <div class="client-logo-wrapper">
+                    <img src="images/client-shinei.png" alt="Shinei" class="client-logo">
+                </div>
             </div>
         </div>
     </section>
