@@ -156,6 +156,19 @@
             a {
                 cursor: pointer;
             }
+
+            /* Disable heavy animations on mobile for smoother performance */
+            .noise-overlay {
+                animation: none;
+            }
+
+            .hero-grid {
+                animation: none;
+            }
+
+            .orb {
+                animation-duration: 30s;
+            }
         }
 
         /* =============================================
@@ -382,7 +395,9 @@
             color: var(--color-accent-secondary);
             margin-bottom: 32px;
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(30px) translateZ(0);
+            will-change: transform, opacity;
+            backface-visibility: hidden;
         }
 
         .hero-title {
@@ -397,12 +412,18 @@
         .hero-title-line {
             display: block;
             overflow: hidden;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
         }
 
         .hero-title-word {
             display: inline-block;
             opacity: 0;
             transform: translateY(100%);
+            will-change: transform, opacity;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform-style: preserve-3d;
         }
 
         .hero-title .highlight {
@@ -413,7 +434,7 @@
             position: relative;
         }
 
-        /* Glowing text effect */
+        /* Glowing text effect - optimized for performance */
         .hero-title .highlight::after {
             content: '動かす';
             position: absolute;
@@ -423,9 +444,19 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            filter: blur(30px);
-            opacity: 0.6;
+            filter: blur(20px);
+            opacity: 0.5;
             z-index: -1;
+            will-change: opacity;
+            transform: translateZ(0);
+        }
+
+        /* Disable heavy blur on mobile for smoother animation */
+        @media (max-width: 768px) {
+            .hero-title .highlight::after {
+                filter: none;
+                opacity: 0;
+            }
         }
 
         .hero-description {
@@ -434,7 +465,9 @@
             max-width: 500px;
             margin: 0 auto 56px;
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(30px) translateZ(0);
+            will-change: transform, opacity;
+            backface-visibility: hidden;
         }
 
         .hero-cta {
@@ -443,7 +476,9 @@
             justify-content: center;
             flex-wrap: wrap;
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(30px) translateZ(0);
+            will-change: transform, opacity;
+            backface-visibility: hidden;
         }
 
         .btn {
@@ -2294,6 +2329,12 @@
             function initHeroAnimation() {
                 gsap.registerPlugin(ScrollTrigger);
 
+                // Set GSAP defaults for better mobile performance
+                gsap.defaults({
+                    force3D: true,
+                    lazy: false
+                });
+
                 // Hero elements with enhanced timing
                 const tl = gsap.timeline();
 
@@ -2301,26 +2342,30 @@
                     opacity: 1,
                     y: 0,
                     duration: 1.2,
-                    ease: 'power4.out'
+                    ease: 'power4.out',
+                    force3D: true
                 })
                     .to('.hero-title-word', {
                         opacity: 1,
                         y: 0,
                         duration: 1.5,
                         ease: 'power4.out',
-                        stagger: 0.3
+                        stagger: 0.2,
+                        force3D: true
                     }, '-=0.8')
                     .to('.hero-description', {
                         opacity: 1,
                         y: 0,
                         duration: 1.2,
-                        ease: 'power3.out'
+                        ease: 'power3.out',
+                        force3D: true
                     }, '-=0.6')
                     .to('.hero-cta', {
                         opacity: 1,
                         y: 0,
                         duration: 1.2,
-                        ease: 'power3.out'
+                        ease: 'power3.out',
+                        force3D: true
                     }, '-=0.6')
                     .to('.hero-scroll', {
                         opacity: 0.6,
