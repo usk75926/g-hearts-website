@@ -164,10 +164,18 @@
 
             .hero-grid {
                 animation: none;
+                transform: none;
+                display: none;
             }
 
             .orb {
-                animation-duration: 30s;
+                animation: none;
+                filter: blur(30px);
+                opacity: 0.5;
+            }
+
+            .floating-orbs {
+                display: none;
             }
         }
 
@@ -2216,11 +2224,13 @@
             const loader = document.querySelector('.loader');
 
             window.addEventListener('load', () => {
+                // Shorter delay on mobile
+                const delay = window.innerWidth <= 768 ? 1000 : 2000;
                 setTimeout(() => {
                     loader.classList.add('hidden');
                     initHeroAnimation();
                     initParallax();
-                }, 2000);
+                }, delay);
             });
 
             // =============================================
@@ -2329,22 +2339,59 @@
             function initHeroAnimation() {
                 gsap.registerPlugin(ScrollTrigger);
 
+                // Detect mobile for lighter animations
+                const isMobile = window.innerWidth <= 768;
+
                 // Set GSAP defaults for better mobile performance
                 gsap.defaults({
                     force3D: true,
                     lazy: false
                 });
 
-                // Hero elements with enhanced timing
+                // Hero elements - faster and lighter on mobile
                 const tl = gsap.timeline();
 
-                tl.to('.hero-tagline', {
-                    opacity: 1,
-                    y: 0,
-                    duration: 1.2,
-                    ease: 'power4.out',
-                    force3D: true
-                })
+                if (isMobile) {
+                    // Simpler, faster animation for mobile
+                    tl.to('.hero-tagline', {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.6,
+                        ease: 'power2.out'
+                    })
+                    .to('.hero-title-word', {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        ease: 'power2.out',
+                        stagger: 0.15
+                    }, '-=0.3')
+                    .to('.hero-description', {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.6,
+                        ease: 'power2.out'
+                    }, '-=0.3')
+                    .to('.hero-cta', {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.6,
+                        ease: 'power2.out'
+                    }, '-=0.3')
+                    .to('.hero-scroll', {
+                        opacity: 0.6,
+                        duration: 0.5,
+                        ease: 'power2.out'
+                    }, '-=0.2');
+                } else {
+                    // Full animation for desktop
+                    tl.to('.hero-tagline', {
+                        opacity: 1,
+                        y: 0,
+                        duration: 1.2,
+                        ease: 'power4.out',
+                        force3D: true
+                    })
                     .to('.hero-title-word', {
                         opacity: 1,
                         y: 0,
@@ -2372,47 +2419,52 @@
                         duration: 1,
                         ease: 'power2.out'
                     }, '-=0.4');
+                }
 
-                // Parallax on hero background
-                gsap.to('.hero-bg', {
-                    yPercent: 50,
-                    ease: 'none',
-                    scrollTrigger: {
-                        trigger: '.hero',
-                        start: 'top top',
-                        end: 'bottom top',
-                        scrub: 1
-                    }
-                });
+                // Parallax effects - desktop only
+                if (!isMobile) {
+                    gsap.to('.hero-bg', {
+                        yPercent: 50,
+                        ease: 'none',
+                        scrollTrigger: {
+                            trigger: '.hero',
+                            start: 'top top',
+                            end: 'bottom top',
+                            scrub: 1
+                        }
+                    });
 
-                // Floating orbs parallax
-                gsap.to('.orb-1', {
-                    y: -100,
-                    ease: 'none',
-                    scrollTrigger: {
-                        trigger: '.hero',
-                        start: 'top top',
-                        end: 'bottom top',
-                        scrub: 2
-                    }
-                });
+                    gsap.to('.orb-1', {
+                        y: -100,
+                        ease: 'none',
+                        scrollTrigger: {
+                            trigger: '.hero',
+                            start: 'top top',
+                            end: 'bottom top',
+                            scrub: 2
+                        }
+                    });
 
-                gsap.to('.orb-2', {
-                    y: -150,
-                    ease: 'none',
-                    scrollTrigger: {
-                        trigger: '.hero',
-                        start: 'top top',
-                        end: 'bottom top',
-                        scrub: 1.5
-                    }
-                });
+                    gsap.to('.orb-2', {
+                        y: -150,
+                        ease: 'none',
+                        scrollTrigger: {
+                            trigger: '.hero',
+                            start: 'top top',
+                            end: 'bottom top',
+                            scrub: 1.5
+                        }
+                    });
+                }
             }
 
             // =============================================
-            // PARALLAX SECTIONS
+            // PARALLAX SECTIONS - Desktop only
             // =============================================
             function initParallax() {
+                // Skip parallax on mobile for better performance
+                if (window.innerWidth <= 768) return;
+
                 const sections = document.querySelectorAll('.parallax-section');
 
                 sections.forEach(section => {
