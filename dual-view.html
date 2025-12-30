@@ -8,7 +8,9 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
 
     <style>
         :root {
@@ -31,7 +33,9 @@
             --transition-smooth: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        *, *::before, *::after {
+        *,
+        *::before,
+        *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -376,6 +380,7 @@
             width: 150px;
             height: 4px;
             -webkit-appearance: none;
+            appearance: none;
             background: var(--glass-border);
             border-radius: 2px;
             cursor: pointer;
@@ -512,9 +517,19 @@
         }
 
         @keyframes countdownPulse {
-            0% { transform: scale(0.5); opacity: 0; }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); opacity: 1; }
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         /* Grid overlay */
@@ -531,7 +546,7 @@
 
         .grid-overlay.active {
             display: block;
-            background-image: 
+            background-image:
                 linear-gradient(to right, rgba(0, 212, 170, 0.5) 2px, transparent 2px),
                 linear-gradient(to bottom, rgba(0, 212, 170, 0.5) 2px, transparent 2px);
             background-size: 33.33% 33.33%;
@@ -628,8 +643,17 @@
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            50% { opacity: 0.7; box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+
+            0%,
+            100% {
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+
+            50% {
+                opacity: 0.7;
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
         }
 
         /* Compare section */
@@ -704,16 +728,33 @@
             animation: slideIn 0.3s ease;
         }
 
-        .toast.show { display: block; }
-        .toast.error { border-color: #ef4444; }
-        .toast.success { border-color: var(--color-accent-secondary); }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        .toast.show {
+            display: block;
         }
 
-        .hidden { display: none !important; }
+        .toast.error {
+            border-color: #ef4444;
+        }
+
+        .toast.success {
+            border-color: var(--color-accent-secondary);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
 
         #cameraVideoHidden {
             position: fixed;
@@ -728,16 +769,46 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .header { padding: 16px 20px; }
-            .container { padding: 80px 16px 24px; }
-            .view-area { flex-direction: column; }
-            .view-panel { width: 100% !important; flex: none !important; }
-            .control-bar { justify-content: center; }
-            .control-divider { display: none; }
-            .mode-selector { flex-direction: column; }
-            .compare-steps { flex-direction: column; }
-            .countdown-number { font-size: 80px; }
-            .countdown-go { font-size: 60px; }
+            .header {
+                padding: 16px 20px;
+            }
+
+            .container {
+                padding: 80px 16px 24px;
+            }
+
+            .view-area {
+                flex-direction: column;
+            }
+
+            .view-panel {
+                width: 100% !important;
+                flex: none !important;
+            }
+
+            .control-bar {
+                justify-content: center;
+            }
+
+            .control-divider {
+                display: none;
+            }
+
+            .mode-selector {
+                flex-direction: column;
+            }
+
+            .compare-steps {
+                flex-direction: column;
+            }
+
+            .countdown-number {
+                font-size: 80px;
+            }
+
+            .countdown-go {
+                font-size: 60px;
+            }
         }
     </style>
 </head>
@@ -780,7 +851,7 @@
         <!-- Video source -->
         <div class="card">
             <div class="card-title">📺 お手本動画を選択</div>
-            
+
             <div class="tabs">
                 <button class="tab active" data-source="youtube" onclick="switchSource('youtube')">YouTube</button>
                 <button class="tab" data-source="local" onclick="switchSource('local')">ローカル動画</button>
@@ -794,9 +865,12 @@
             </div>
 
             <div id="sourceLocal" class="source-input hidden">
-                <input type="file" id="localFile" accept="video/*" onchange="loadLocalFile(this)" style="display: none;">
-                <button class="btn btn-primary" onclick="document.getElementById('localFile').click()">📂 ファイルを選択</button>
-                <span id="localSelectedName" style="margin-left: 16px; font-size: 0.85rem; color: var(--color-text-muted);"></span>
+                <input type="file" id="localFile" accept="video/*" onchange="loadLocalFile(this)"
+                    style="display: none;">
+                <button class="btn btn-primary" onclick="document.getElementById('localFile').click()">📂
+                    ファイルを選択</button>
+                <span id="localSelectedName"
+                    style="margin-left: 16px; font-size: 0.85rem; color: var(--color-text-muted);"></span>
             </div>
         </div>
 
@@ -812,7 +886,8 @@
         <div class="size-control" id="sizeControl">
             <label>📐 画面比率:</label>
             <span style="font-size: 0.75rem; color: var(--color-text-muted);">お手本</span>
-            <input type="range" class="slider" id="sizeSlider" min="20" max="80" value="50" oninput="updatePanelSize(this.value)">
+            <input type="range" class="slider" id="sizeSlider" min="20" max="80" value="50"
+                oninput="updatePanelSize(this.value)">
             <span style="font-size: 0.75rem; color: var(--color-text-muted);">カメラ</span>
             <span id="sizeValue" style="font-size: 0.75rem; color: var(--color-accent-secondary);">50% : 50%</span>
         </div>
@@ -820,7 +895,8 @@
         <!-- Overlay opacity -->
         <div id="overlayControl" class="size-control hidden">
             <label>🔲 お手本の透明度:</label>
-            <input type="range" class="slider" id="overlayOpacity" min="0" max="100" value="50" oninput="updateOverlayOpacity(this.value)">
+            <input type="range" class="slider" id="overlayOpacity" min="0" max="100" value="50"
+                oninput="updateOverlayOpacity(this.value)">
             <span id="opacityValue" style="font-size: 0.75rem; color: var(--color-accent-secondary);">50%</span>
         </div>
 
@@ -911,7 +987,8 @@
             <div class="control-divider"></div>
 
             <div class="control-group">
-                <button class="btn btn-secondary btn-sm active" id="refMirrorBtn" onclick="toggleRefMirror()">🪞 お手本</button>
+                <button class="btn btn-secondary btn-sm active" id="refMirrorBtn" onclick="toggleRefMirror()">🪞
+                    お手本</button>
                 <button class="btn btn-secondary btn-sm" id="camMirrorBtn" onclick="toggleCamMirror()">🪞 カメラ</button>
             </div>
 
@@ -943,12 +1020,17 @@
         <div id="compareControls" class="card hidden">
             <div class="card-title">📼 録画を選択して比較</div>
             <div style="margin-bottom: 16px;">
-                <input type="file" id="recordedFile" accept="video/*" onchange="loadRecordedFile(this)" style="display: none;">
-                <button class="btn btn-primary" onclick="document.getElementById('recordedFile').click()">📂 録画を選択</button>
-                <span id="recordedFileName" style="margin-left: 16px; font-size: 0.85rem; color: var(--color-text-muted);"></span>
+                <input type="file" id="recordedFile" accept="video/*" onchange="loadRecordedFile(this)"
+                    style="display: none;">
+                <button class="btn btn-primary" onclick="document.getElementById('recordedFile').click()">📂
+                    録画を選択</button>
+                <span id="recordedFileName"
+                    style="margin-left: 16px; font-size: 0.85rem; color: var(--color-text-muted);"></span>
             </div>
             <div class="control-group">
-                <button class="btn btn-secondary btn-sm" onclick="syncPlayback()" style="background: linear-gradient(135deg, var(--color-accent-secondary), var(--color-accent-tertiary)); color: white; border: none;">🔄 同期再生</button>
+                <button class="btn btn-secondary btn-sm" onclick="syncPlayback()"
+                    style="background: linear-gradient(135deg, var(--color-accent-secondary), var(--color-accent-tertiary)); color: white; border: none;">🔄
+                    同期再生</button>
                 <button class="btn btn-secondary btn-sm" onclick="resetPlayback()">⏮️ 最初から</button>
             </div>
         </div>
@@ -992,11 +1074,11 @@
             try {
                 const constraints = { video: { facingMode: currentFacingMode, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: true };
                 cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
-                
+
                 // 非表示ビデオ（オーバーレイ用）- 常にアクティブに保つ
                 cameraVideoHidden.srcObject = cameraStream;
                 cameraVideoHidden.play().catch(e => console.log('Hidden video play:', e));
-                
+
                 // 表示用ビデオ
                 cameraVideoVisible.srcObject = cameraStream;
                 cameraVideoVisible.classList.remove('hidden');
@@ -1042,7 +1124,7 @@
             const viewArea = document.getElementById('viewArea');
             const overlayArea = document.getElementById('overlayArea');
             if (overlayAnimationId) { cancelAnimationFrame(overlayAnimationId); overlayAnimationId = null; }
-            
+
             document.getElementById('overlayControl').classList.toggle('hidden', mode !== 'overlay');
             document.getElementById('compareControls').classList.toggle('hidden', mode !== 'compare');
             document.getElementById('compareGuide').classList.toggle('hidden', mode !== 'compare');
@@ -1050,7 +1132,7 @@
             document.getElementById('cameraLabel').textContent = mode === 'compare' ? '録画' : 'カメラ';
             viewArea.classList.toggle('hidden', mode === 'overlay');
             overlayArea.classList.toggle('hidden', mode !== 'overlay');
-            
+
             if (mode === 'practice') showCamera();
             else if (mode === 'compare') showRecorded();
             else if (mode === 'overlay') startOverlay();
@@ -1140,23 +1222,23 @@
             if (!cameraStream) { showToast('カメラが利用できません', 'error'); return; }
             isCountingDown = true;
             document.getElementById('recordBtn').textContent = '❌ キャンセル';
-            
+
             const refVideo = document.getElementById('referenceVideo');
             if (refVideo?.src) { refVideo.currentTime = 0; refVideo.pause(); }
             if (youtubePlayer?.seekTo) { youtubePlayer.seekTo(0, true); youtubePlayer.pauseVideo(); }
-            
+
             const overlayRef = document.getElementById('countdownOverlayRef');
             const overlayCam = document.getElementById('countdownOverlayCam');
             const numberRef = document.getElementById('countdownNumberRef');
             const numberCam = document.getElementById('countdownNumberCam');
             overlayRef.classList.add('active');
             overlayCam.classList.add('active');
-            
+
             let count = 3;
             numberRef.textContent = count; numberCam.textContent = count;
             numberRef.className = 'countdown-number'; numberCam.className = 'countdown-number';
             showToast('3秒後に録画開始！');
-            
+
             const interval = setInterval(() => {
                 if (!isCountingDown) { clearInterval(interval); overlayRef.classList.remove('active'); overlayCam.classList.remove('active'); return; }
                 count--;
@@ -1189,15 +1271,15 @@
             recordedChunks = [];
             try { mediaRecorder = new MediaRecorder(cameraStream, { mimeType: 'video/webm;codecs=vp9' }); }
             catch { try { mediaRecorder = new MediaRecorder(cameraStream, { mimeType: 'video/webm' }); } catch { showToast('録画非対応', 'error'); return; } }
-            
+
             mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
             mediaRecorder.onstop = () => saveRecording(new Blob(recordedChunks, { type: 'video/webm' }));
             mediaRecorder.start(1000);
-            
+
             const refVideo = document.getElementById('referenceVideo');
             if (refVideo?.src) { refVideo.currentTime = 0; refVideo.play(); }
             if (youtubePlayer?.playVideo) { youtubePlayer.seekTo(0, true); youtubePlayer.playVideo(); }
-            
+
             isRecording = true;
             recordingStartTime = Date.now();
             document.getElementById('recordBtn').textContent = '⏹️ 停止';
@@ -1213,7 +1295,7 @@
             const refVideo = document.getElementById('referenceVideo');
             if (refVideo && !refVideo.paused) refVideo.pause();
             if (youtubePlayer?.pauseVideo) youtubePlayer.pauseVideo();
-            
+
             isRecording = false;
             clearInterval(recordingTimer);
             document.getElementById('recordBtn').textContent = '⏺️ 録画';
@@ -1241,7 +1323,7 @@
             const btn = document.getElementById('playPauseBtn');
             const refVideo = document.getElementById('referenceVideo');
             const recordedVideo = document.getElementById('recordedVideo');
-            
+
             if (youtubePlayer?.getPlayerState) {
                 if (youtubePlayer.getPlayerState() === YT.PlayerState.PLAYING) { youtubePlayer.pauseVideo(); btn.textContent = '▶️'; }
                 else { youtubePlayer.playVideo(); btn.textContent = '⏸️'; }
@@ -1294,15 +1376,15 @@
             const ctx = canvas.getContext('2d');
             const refVideo = document.getElementById('referenceVideo');
             canvas.width = 1280; canvas.height = 720;
-            
+
             // cameraVideoHiddenが再生されていることを確認
             if (cameraVideoHidden && cameraVideoHidden.paused && cameraStream) {
                 cameraVideoHidden.play().catch(e => console.log('Overlay: Hidden video play:', e));
             }
-            
+
             function draw() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
+
                 // カメラ映像を描画（cameraVideoHiddenから取得）
                 if (cameraVideoHidden && cameraVideoHidden.readyState >= 2 && cameraVideoHidden.videoWidth > 0) {
                     ctx.save();
@@ -1318,7 +1400,7 @@
                     ctx.textAlign = 'center';
                     ctx.fillText('カメラ準備中...', canvas.width / 2, canvas.height / 2);
                 }
-                
+
                 // お手本を半透明で重ねる
                 ctx.globalAlpha = parseFloat(document.getElementById('overlayOpacity').value) / 100;
                 if (refVideo && !refVideo.classList.contains('hidden') && refVideo.readyState >= 2) {
@@ -1357,4 +1439,5 @@
         }
     </script>
 </body>
+
 </html>
